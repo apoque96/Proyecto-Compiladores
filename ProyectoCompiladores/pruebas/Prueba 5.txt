@@ -1,0 +1,6 @@
+int i = int(Read());
+
+while(i > 0){
+	Write(i);
+	i = i - 1;
+}

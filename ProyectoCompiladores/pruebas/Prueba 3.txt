@@ -1,0 +1,10 @@
+int myInput = int(Read());
+
+if(myInput > 0)
+{
+	Write("Positive");
+}
+else
+{
+	Write("Negative");
+}

@@ -1,0 +1,56 @@
+﻿Gramatica:
+
+T = {int, float, string, bool, if, else, while, Read, Write, return, +, -, *, /, >, <, =, !=, (, ), {, }, [, ], ;, ',', ID, STRING, INT, FLOAT, BOOL}
+NT = {<Declaration>, <StatementList>, <Statement>, <Type>, <Operation>, <Operator>, <Control>, <Expression>, <Expression'>, <Term>, <Term'>, <Factor>, <Literal>, 
+		<FunctionDeclaration>, <ParameterList>, <ParameterList'>, <IO>}
+$ = {<S>}
+
+P =
+{
+	<Program> ::= <StatementList>
+	<StatementList> ::= <Statement> <StatementList> | ε
+	<Statement> ::= <Declaration> | <Operation> | <Control> | <IO> | <FunctionDeclaration>
+	<Declaration> ::= <Type> ID = <Expression>;
+	<Type> ::= int | float | string | bool
+	<Operation> ::= <Expression> <Operator> <Expression>;
+	<Operator> ::= + | - | * | / | > | < | == | !=
+	<Control> ::= if (<Expression>) { <StatementList> } else { <StatementList> } | while (<Expression>) { <StatementList> }
+	<Expression> ::= <Term> <Expression'>
+	<Expression'> ::= <Operator> <Term> <Expression'> | ε
+	<Term> ::= <Factor> <Term'>
+	<Term'> ::= <Operator> <Factor> <Term'> | ε
+	<Factor> ::= ID | <Literal> | (<Expression>)
+	<Literal> ::= INT | FLOAT | STRING | BOOL
+	<IO> ::= Read(); | Write(<Expression>);
+	<FunctionDeclaration> ::= fn ID(<ParameterList>) <ReturnType>
+	<ReturnType> ::= -> <Type> { <StatementList> return <Expression> } | { <StatementList> }
+	<ParameterList> ::= <Type> ID <ParameterList'> | ε
+	<ParameterList'> ::= , <Type> ID <ParameterList'> | ε
+
+//
+	<S> ::= <StatementList>
+	<StatementList> ::= <Statement> <StatementList>
+	<Statement> ::= <Declaration> | <Operation> | <Control> | <FunctionDeclaration>
+	<Declaration> ::= string ID = STRING | int ID = INT | float ID = FLOAT | bool ID = BOOL
+	<Operation> ::= 
+	<Control> ::= if <> while <> <else_part> 
+	<else_part> → else <stmt> | ε 
+	<expr> → ID | VAR
+	<stmt> → EXP
+	<FunctionDeclaration> ::= fn ID ( <params> ) -> <VAR> { <stmt> }
+	<params> ::= <Type> ID, <params> | ε
+	<VAR> ::= STRING | INT | FLOAT | BOOL
+//
+}
+
+
+
+Expresiones Regulares:
+
+ID = [a-zA-Z][a-zA-Z1-9_]*
+INT = [0-9]+
+FLOAT = [0-9]+\.[0-9]+
+STRING = "([^"\\]*(\\.[^"\\]*)*)"
+BOOL = true|false
+KEYWORD = int | float | string | bool | if | else | while | Read | Write | return
+SPECIALCHAR = + | - | * | / | > | < | = | != | ( | ) | { | } | [ | ] | ; | , | ' | "
