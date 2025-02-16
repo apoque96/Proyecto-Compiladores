@@ -1,4 +1,5 @@
-int myInput = int(Read());
+int myInput;
+Read(myInput);
 
 if(myInput > 0)
 {
