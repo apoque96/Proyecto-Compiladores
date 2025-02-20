@@ -1,37 +1,64 @@
 ﻿Gramatica:
 
 T = {int, float, string, bool, if, else, while, Read, Write, return, +, -, *, /, >, <, =, !=, (, ), {, }, [, ], ;, ',', ->, ID, STRING, INT, FLOAT, BOOL}
-NT = {<Declaration>, <Declaration'>, <StatementList>, <Statement>, <Type>, <Operation>, <Control>, <Expression>, <Expression'>, <Term>, <Term'>, <Factor>, 
-		<Literal>, <ifDeclaration>, <elseDeclaration>, <elseDeclaration'>, <FunctionDeclaration>, <ParameterList>, <ParameterList'>,
-		<MultiplicativeOperator>, <AdditiveOperator>, <ReturnType>, <IO>}
-$ = {<Program>}
+NT = {<D>, <SL>, <S>, <T>, <T'>, <Control>, <E>, <E'>, <F>, <DS>, <FunctionDeclaration>,  <IO>
+
+		<Literal>, <ifDeclaration>, <elseDeclaration>, <elseDeclaration'>, <ParameterList>, <ParameterList'>,
+		<MultiplicativeOperator>, <AdditiveOperator>, <ReturnType>}
+$ = {<PG>}
 
 P =
 {
-	<Program> ::= <StatementList>
-	<StatementList> ::= <Statement> <StatementList> | ε
-	<Statement> ::= <Declaration> | <Operation> | <Control> | <IO> | <FunctionDeclaration>
-	<Declaration> ::= <Type> ID <Declaration'>;
-	<Declaration'> ::= = <Expression> | ε
-	<Type> ::= int | float | string | bool
-	<Operation> ::= <Expression>;
-	<Control> ::= <ifDeclaration> | while (<Expression>) { <StatementList> }
-	<ifDeclaration> ::= if (<Expression>) { <StatementList> } <elseDeclaration>
-	<elseDeclaration> ::= else <elseDeclaration'> | ε
-	<elseDeclaration'> ::= { <StatementList> } | <ifDeclaration>
-	<Expression> ::= <Term> <Expression'>
-	<Expression'> ::= <AdditiveOperator> <Term> <Expression'> | ε
-	<Term> ::= <Factor> <Term'>
-	<Term'> ::= <MultiplicativeOperator> <Factor> <Term'> | ε
-	<Factor> ::= ID | <Literal> | ( <Expression> )
-	<AdditiveOperator> ::= + | -
-	<MultiplicativeOperator> ::= * | /
-	<Literal> ::= INT | FLOAT | STRING | BOOL
-	<IO> ::= Read(ID); | Write(<Expression>);
-	<FunctionDeclaration> ::= fn ID(<ParameterList>) <ReturnType>
-	<ReturnType> ::= -> <Type> { <StatementList> return <Expression> } | { <StatementList> }
-	<ParameterList> ::= <Type> ID <ParameterList'> | ε
-	<ParameterList'> ::= , <Type> ID <ParameterList'> | ε
+	<PG> ::= <SL>
+	<SL> ::= <S> <SL> | ε
+	<S> ::= <D> | <CE> | <IO> | <FD>
+	<D> ::= int ID = <E>; | float ID = <E>; | string ID = STRING; | bool ID = <DS>;
+	<E> ::= <T> <E’>
+	<E’> ::= + <T> <E’> | - <T> <E’> | ε
+	<T> ::= <F> <T’>
+	<T´> ::= * <F> <T´> | / <F> <T´> | ε
+	<F> ::= (<E>) | INT | FLOAT
+	<DS> ::= true | false | <E> <DS’> <E> | STRING == STRING | STRING != STRING
+	<DS’> ::= > | < | == | !=
+	<IO> ::= Read(ID); | Write(STRING);
+	<CE> ::= <IFD> | while (<DS>) { <SL> }
+	<IFD> ::= if (<DS>) { <SL> } <ED>
+	<ED> ::= else <ED'> | ε
+	<ED'> ::= { <SL> } | <IFD>
+	<FD> ::= fn ID(<PL>) <RT>
+	<RT> ::= -> <TY> { <SL> return <TY'> } | { <SL> }
+	<PL> ::= <TY> ID <PL'> | ε
+	<PL'> ::= , <TY> ID <PL'> | ε
+	<TY> ::= int | float | string | bool
+	<TY'> ::= INT | FLOAT | STRING | BOOL
+}
+
+{
+	////
+		<Program> ::= <StatementList>
+		<StatementList> ::= <Statement> <StatementList> | ε
+		<Statement> ::= <Declaration> | <Operation> | <Control> | <IO> | <FunctionDeclaration>
+		<Declaration> ::= <Type> ID <Declaration'>;
+		<Declaration'> ::= = <Expression> | ε
+		<Type> ::= int | float | string | bool
+		<Operation> ::= <Expression>;
+		<Control> ::= <ifDeclaration> | while (<Expression>) { <StatementList> }
+		<ifDeclaration> ::= if (<Expression>) { <StatementList> } <elseDeclaration>
+		<elseDeclaration> ::= else <elseDeclaration'> | ε
+		<elseDeclaration'> ::= { <StatementList> } | <ifDeclaration>
+		<Expression> ::= <Term> <Expression'>
+		<Expression'> ::= <AdditiveOperator> <Term> <Expression'> | ε
+		<Term> ::= <Factor> <Term'>
+		<Term'> ::= <MultiplicativeOperator> <Factor> <Term'> | ε
+		<Factor> ::= ID | <Literal> | ( <Expression> )
+		<AdditiveOperator> ::= + | -
+		<MultiplicativeOperator> ::= * | /
+		<Literal> ::= INT | FLOAT | STRING | BOOL
+		<FunctionDeclaration> ::= fn ID(<ParameterList>) <ReturnType>
+		<ReturnType> ::= -> <Type> { <StatementList> return <Expression> } | { <StatementList> }
+		<ParameterList> ::= <Type> ID <ParameterList'> | ε
+		<ParameterList'> ::= , <Type> ID <ParameterList'> | ε
+	////
 }
 
 
