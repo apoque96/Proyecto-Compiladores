@@ -1,17 +1,14 @@
 ﻿Gramatica:
 
 T = {int, float, string, bool, if, else, while, Read, Write, return, +, -, *, /, >, <, =, !=, (, ), {, }, [, ], ;, ',', ->, ID, STRING, INT, FLOAT, BOOL}
-NT = {<D>, <SL>, <S>, <T>, <T'>, <Control>, <E>, <E'>, <F>, <DS>, <FunctionDeclaration>,  <IO>
-
-		<Literal>, <ifDeclaration>, <elseDeclaration>, <elseDeclaration'>, <ParameterList>, <ParameterList'>,
-		<MultiplicativeOperator>, <AdditiveOperator>, <ReturnType>}
+NT = {<PG>, <SL>, <S>, <D>, <E>, <E'>, <T>, <T'>, <F>, <DS>, <DS'>, <IO>, <CE>, <IFD>, <ED>, <ED'>, <FD>, <RT>, <PL>, <PL'>, <TY>, <TY'>} 
 $ = {<PG>}
 
 P =
 {
-	<PG> ::= <SL>
+	<PG> ::= <SL> <FD>
 	<SL> ::= <S> <SL> | ε
-	<S> ::= <D> | <CE> | <IO> | <FD>
+	<S> ::= <D> | <CE> | <IO> 
 	<D> ::= int ID = <E>; | float ID = <E>; | string ID = STRING; | bool ID = <DS>;
 	<E> ::= <T> <E’>
 	<E’> ::= + <T> <E’> | - <T> <E’> | ε
@@ -19,19 +16,20 @@ P =
 	<T´> ::= * <F> <T´> | / <F> <T´> | ε
 	<F> ::= (<E>) | INT | FLOAT
 	<DS> ::= true | false | <E> <DS’> <E> | STRING == STRING | STRING != STRING
-	<DS’> ::= > | < | == | !=
+	<DS’> ::= > | < | >= | <= | == | !=
 	<IO> ::= Read(ID); | Write(STRING);
 	<CE> ::= <IFD> | while (<DS>) { <SL> }
 	<IFD> ::= if (<DS>) { <SL> } <ED>
 	<ED> ::= else <ED'> | ε
 	<ED'> ::= { <SL> } | <IFD>
-	<FD> ::= fn ID(<PL>) <RT>
+	<FD> ::= fn ID(<PL>) <RT> <FD> | ε
 	<RT> ::= -> <TY> { <SL> return <TY'> } | { <SL> }
 	<PL> ::= <TY> ID <PL'> | ε
 	<PL'> ::= , <TY> ID <PL'> | ε
 	<TY> ::= int | float | string | bool
 	<TY'> ::= INT | FLOAT | STRING | BOOL
 }
+
 
 {
 	////
@@ -71,4 +69,4 @@ FLOAT = f[0-9]+\.[0-9]+
 STRING = "([^"\\]*(\\.[^"\\]*)*)"
 BOOL = true|false
 KEYWORD = int | float | string | bool | if | else | while | Read | Write | return
-SPECIALCHAR = + | - | * | / | > | < | = | != | ( | ) | { | } | [ | ] | ; | , | ' | "
+SPECIALCHAR = + | - | * | / | > | < | >= | <= | = | != | ( | ) | { | } | [ | ] | ; | , | ' | "
