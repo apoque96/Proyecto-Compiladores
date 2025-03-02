@@ -1,4 +1,4 @@
-int i = int(Read());
+int i = Read();
 
 while(i > 0){
 	Write(i);
