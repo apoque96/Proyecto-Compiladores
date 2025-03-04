@@ -16,6 +16,7 @@ namespace ProyectoCompiladores.lexer
         FLOAT_KEYWORD,
         STRING_KEYWORD,
         BOOL_KEYWORD,
+        BEGIN_PROGRAM,
         IF,
         ELSE,
         WHILE,

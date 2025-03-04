@@ -1,3 +1,4 @@
+BeginProgram
 int i = Read();
 
 while(i > 0){

@@ -6,7 +6,7 @@ $ = {<PG>}
 
 P =
 {
-	<PG> ::= <FD> BeingProgram <SL>
+	<PG> ::= <FD> BeginProgram <SL>
 	<SL> ::= <S> <SL> | ε
 	<S> ::= <D> | <CE> | <IO> 
 	<D> ::= int ID = <E>; | float ID = <E>; | string ID = STRING; | bool ID = <DS>;
@@ -68,5 +68,5 @@ INT = [0-9]+
 FLOAT = f[0-9]+\.[0-9]+
 STRING = "([^"\\]*(\\.[^"\\]*)*)"
 BOOL = true|false
-KEYWORD = int | float | string | bool | if | else | while | Read | Write | return
+KEYWORD = int | float | string | bool | if | else | while | Read | Write | return | BeginProgram
 SPECIALCHAR = + | - | * | / | > | < | >= | <= | = | != | ( | ) | { | } | [ | ] | ; | , | ' | "

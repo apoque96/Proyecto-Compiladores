@@ -1,1 +1,2 @@
+BeginProgram
 Write("Hello World");

@@ -6,7 +6,18 @@ public class Compiler
     {
         try
         {
-            using StreamReader sr = new(args[0]);
+            string path;
+            if (args.Length == 1)
+            {
+                path = args[0];   
+            }
+            else
+            {
+                Console.WriteLine("Ingrese la ruta al archivo(ruta relativa)");
+                path = Console.ReadLine();
+            }
+
+            using StreamReader sr = new(path);
             string input = sr.ReadToEnd();
             Lexer lexer = new(input);
             var tokens = lexer.Tokenize();

@@ -8,6 +8,7 @@ namespace ProyectoCompiladores.lexer
     {
         private static readonly List<(TokenType, string)> TokenPatterns = new()
         {
+            (TokenType.BEGIN_PROGRAM, @"BeginProgram"),
             (TokenType.WHITESPACE, @"\s+"),
             (TokenType.INT_KEYWORD, @"int"),
             (TokenType.FLOAT_KEYWORD, @"float"),
