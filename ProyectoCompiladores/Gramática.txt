@@ -1,14 +1,14 @@
 ﻿Gramatica:
 
 T = {int, float, string, bool, if, else, while, Read, Write, return, +, -, *, /, >, <, =, !=, (, ), {, }, [, ], ;, ',', ->, ID, STRING, INT, FLOAT, BOOL}
-NT = {<PG>, <SL>, <S>, <D>, <E>, <E'>, <T>, <T'>, <F>, <DS>, <DS'>, <IO>, <CE>, <IFD>, <ED>, <ED'>, <FD>, <RT>, <PL>, <PL'>, <TY>, <TY'>} 
+NT = {<PG>, <SL>, <S>, <D>, <E>, <E'>, <T>, <T'>, <F>, <DS>, <DS'>, <IO>, <CE>, <IFD>, <ED>, <ED'>, <FD>, <RT>, <PL>, <PL'>, <TY>, <TY'>, <FC>, <P>, <P'>} 
 $ = {<PG>}
 
 P =
 {
 	<PG> ::= <FD> BeginProgram <SL>
 	<SL> ::= <S> <SL> | ε
-	<S> ::= <D> | <CE> | <IO> 
+	<S> ::= <D> | <CE> | <IO> | <FC>
 	<D> ::= int ID = <E>; | float ID = <E>; | string ID = STRING; | bool ID = <DS>;
 	<E> ::= <T> <E’>
 	<E’> ::= + <T> <E’> | - <T> <E’> | ε
@@ -28,38 +28,10 @@ P =
 	<PL'> ::= , <TY> ID <PL'> | ε
 	<TY> ::= int | float | string | bool
 	<TY'> ::= INT | FLOAT | STRING | BOOL
+	<FC> ::= ID(<P>)
+	<P> ::= <TY'> <P'> | ε
+	<P'> ::= , <TY'> <P'> | ε
 }
-
-
-{
-	////
-		<Program> ::= <StatementList>
-		<StatementList> ::= <Statement> <StatementList> | ε
-		<Statement> ::= <Declaration> | <Operation> | <Control> | <IO> | <FunctionDeclaration>
-		<Declaration> ::= <Type> ID <Declaration'>;
-		<Declaration'> ::= = <Expression> | ε
-		<Type> ::= int | float | string | bool
-		<Operation> ::= <Expression>;
-		<Control> ::= <ifDeclaration> | while (<Expression>) { <StatementList> }
-		<ifDeclaration> ::= if (<Expression>) { <StatementList> } <elseDeclaration>
-		<elseDeclaration> ::= else <elseDeclaration'> | ε
-		<elseDeclaration'> ::= { <StatementList> } | <ifDeclaration>
-		<Expression> ::= <Term> <Expression'>
-		<Expression'> ::= <AdditiveOperator> <Term> <Expression'> | ε
-		<Term> ::= <Factor> <Term'>
-		<Term'> ::= <MultiplicativeOperator> <Factor> <Term'> | ε
-		<Factor> ::= ID | <Literal> | ( <Expression> )
-		<AdditiveOperator> ::= + | -
-		<MultiplicativeOperator> ::= * | /
-		<Literal> ::= INT | FLOAT | STRING | BOOL
-		<FunctionDeclaration> ::= fn ID(<ParameterList>) <ReturnType>
-		<ReturnType> ::= -> <Type> { <StatementList> return <Expression> } | { <StatementList> }
-		<ParameterList> ::= <Type> ID <ParameterList'> | ε
-		<ParameterList'> ::= , <Type> ID <ParameterList'> | ε
-	////
-}
-
-
 
 Expresiones Regulares:
 
