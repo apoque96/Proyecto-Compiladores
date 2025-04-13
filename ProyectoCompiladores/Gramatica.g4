@@ -5,7 +5,8 @@ prog:    pg EOF ;
 pg: fd 'BeginProgram' sl 
 ;
 
-sl: s+
+sl: s sl
+|
 ;
 
 s: d 
@@ -40,6 +41,7 @@ tp: '*' f tp
 f: '(' e ')'
 | INT
 | FLOAT
+| ID
 ;
 
 ds: BOOL
@@ -79,14 +81,16 @@ fd: 'fn' ID '(' pl ')' rt fd
 | /* empty */
 ;
 
-rt: '->' ty '{' sl 'return' typ '}'
+rt: '->' ty '{' sl 'return' typ ';' '}'
 | '{' sl '}'
 ;
 
 pl: ty ID plp
+|
 ;
 
 plp: ',' ty ID plp
+|
 ;
 
 ty: 'int'
@@ -99,6 +103,7 @@ typ: INT
 | FLOAT
 | STRING
 | BOOL
+| ID
 ;
 
 fc: ID '(' p ')'
@@ -114,7 +119,7 @@ pp: ',' typ pp
 
 ID          : [a-zA-Z][a-zA-Z1-9_]* ;
 INT         : [0-9]+ ;
-FLOAT       : [0-9]+'.'[0-9]+ ;
+FLOAT       : 'f'[0-9]+'.'[0-9]+ ;
 STRING : '"' (~["\\] | '\\' .)* '"' ;
 
 BOOL        

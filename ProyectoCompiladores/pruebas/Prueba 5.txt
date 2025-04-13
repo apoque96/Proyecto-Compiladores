@@ -1,7 +1,8 @@
 BeginProgram
-int i = Read();
+int i = 0;
+Read(i);
 
 while(i > 0){
-	Write(i);
-	i = i - 1;
+	Write("hola");
+	int i = i - 1;
 }

@@ -1,5 +1,5 @@
 BeginProgram
-int myInput;
+int myInput = 2;
 Read(myInput);
 
 if(myInput > 0)
