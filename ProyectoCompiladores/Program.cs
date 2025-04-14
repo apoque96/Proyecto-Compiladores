@@ -1,4 +1,8 @@
 ﻿using ProyectoCompiladores.lexer;
+using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
+using System;
+using System.IO;
 
 public class Compiler
 {
@@ -9,27 +13,46 @@ public class Compiler
             string path;
             if (args.Length == 1)
             {
-                path = args[0];   
+                path = args[0];
             }
             else
             {
-                Console.WriteLine("Ingrese la ruta al archivo(ruta relativa)");
+                Console.WriteLine("Ingrese la ruta al archivo (ruta relativa):");
                 path = Console.ReadLine();
             }
 
+            // Leer el contenido del archivo fuente
             using StreamReader sr = new(path);
             string input = sr.ReadToEnd();
-            Lexer lexer = new(input);
+
+            // Tokenizar usando tu lexer personalizado
+            ProyectoCompiladores.lexer.Lexer lexer = new(input);
             var tokens = lexer.Tokenize();
 
+            Console.WriteLine("\n--- Tokens personalizados ---");
             foreach (var token in tokens)
             {
                 Console.WriteLine(token);
             }
+
+            // Análisis sintáctico con ANTLR
+            Console.WriteLine("\n--- Árbol de análisis con ANTLR ---");
+
+            AntlrInputStream antlrInput = new AntlrInputStream(input);
+            GramaticaLexer antlrLexer = new GramaticaLexer(antlrInput);
+            CommonTokenStream tokenStream = new CommonTokenStream(antlrLexer);
+            GramaticaParser parser = new GramaticaParser(tokenStream);
+
+            // Usamos la regla inicial (por ejemplo, prog)
+            var tree = parser.prog();
+
+            // Crear instancia de tu Visitor
+            MyVisitor visitor = new MyVisitor();
+            visitor.Visit(tree);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("Error: " + e.Message);
         }
     }
 }
