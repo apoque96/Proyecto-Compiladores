@@ -108,6 +108,83 @@ public class MyVisitor : GramaticaBaseVisitor<object>
         var ifdNode = new AST.IfdNode();
         return base.VisitIfd(context);
     }
+
+    public override object VisitEd(GramaticaParser.EdContext context)
+    {
+        Console.WriteLine("Visitando Ed: " + context.GetText());
+        var edNode = new AST.EdNode();
+        return base.VisitEd(context);
+    }
+
+    public override object VisitEdp(GramaticaParser.EdpContext context)
+    {
+        Console.WriteLine("Visitando Edp: " + context.GetText());
+        var edpNode = new AST.EdpNode();
+        return base.VisitEdp(context);
+    }
+
+    public override object VisitFd(GramaticaParser.FdContext context)
+    {
+        Console.WriteLine("Visitando Fd: " + context.GetText());
+        var fdNode = new AST.FdNode();
+        return base.VisitFd(context);
+    }
+
+    public override object VisitRt(GramaticaParser.RtContext context)
+    {
+        Console.WriteLine("Visitando Rt: " + context.GetText());
+        var rtNode = new AST.RtNode();
+        return base.VisitRt(context);
+    }
+
+    public override object VisitPl(GramaticaParser.PlContext context)
+    {
+        Console.WriteLine("Visitando Pl: " + context.GetText());
+        var plNode = new AST.PlNode();
+        return base.VisitPl(context);
+    }
+
+    public override object VisitPlp(GramaticaParser.PlpContext context)
+    {
+        Console.WriteLine("Visitando Plp: " + context.GetText());
+        var plpNode = new AST.PlpNode();
+        return base.VisitPlp(context);
+    }
+
+    public override object VisitTy(GramaticaParser.TyContext context)
+    {
+        Console.WriteLine("Visitando Ty: " + context.GetText());
+        var tyNode = new AST.TyNode();
+        return base.VisitTy(context);
+    }
+
+    public override object VisitTyp(GramaticaParser.TypContext context)
+    {
+        Console.WriteLine("Visitando Typ: " + context.GetText());
+        var typNode = new AST.TypNode();
+        return base.VisitTyp(context);
+    }
+
+    public override object VisitFc(GramaticaParser.FcContext context)
+    {
+        Console.WriteLine("Visitando Fc: " + context.GetText());
+        var fcNode = new AST.FcNode();
+        return base.VisitFc(context);
+    }
+
+    public override object VisitP(GramaticaParser.PContext context)
+    {
+        Console.WriteLine("Visitando P: " + context.GetText());
+        var pNode = new AST.PNode();
+        return base.VisitP(context);
+    }
+
+    public override object VisitPp(GramaticaParser.PpContext context)
+    {
+        Console.WriteLine("Visitando Pp: " + context.GetText());
+        var ppNode = new AST.PpNode();
+        return base.VisitPp(context);
+    }
 }
 
    
