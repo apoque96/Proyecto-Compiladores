@@ -1,0 +1,4 @@
+BeginProgram
+int a = 5;
+int sum = a + b;
+int b = 10;

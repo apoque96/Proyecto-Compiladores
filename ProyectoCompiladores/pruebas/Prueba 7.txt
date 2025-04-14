@@ -1,0 +1,4 @@
+BeginProgram
+fn hello(){
+	Write("Hello");
+}

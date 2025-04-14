@@ -1,0 +1,2 @@
+BeginProgram
+int _hello = 2;
