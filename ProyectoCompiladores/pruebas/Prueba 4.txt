@@ -6,4 +6,4 @@ fn add(float a, float b) -> float {
 BeginProgram
 	float a = f1.0;
 	float b = f2.0;
-	add(a, b)
+	add(a, b);

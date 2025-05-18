@@ -106,7 +106,7 @@ typ: INT
 | ID
 ;
 
-fc: ID '(' p ')'
+fc: ID '(' p ')' ';'
 ;
 
 p: typ pp

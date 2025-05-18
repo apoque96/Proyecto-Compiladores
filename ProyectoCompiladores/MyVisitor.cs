@@ -28,11 +28,9 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
     }
 
 
-
     public override VariableSegment VisitProg(GramaticaParser.ProgContext context)
     {
         Console.WriteLine("Visitando programa principal...");
-        var progNode = new AST.PgNode();
 
         visitChildren(context);
 
@@ -45,7 +43,6 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
 
         visitChildren(context);
 
-        var pgNode = new AST.PgNode();
         return interpreterProgram;
     }
 
@@ -55,7 +52,7 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
 
         visitChildren(context);
 
-        var slNode = new AST.SlNode();
+
         return interpreterProgram;
     }
 
@@ -65,7 +62,6 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
 
         visitChildren(context);
 
-        var sNode = new AST.SNode();
         return interpreterProgram;
     }
 
@@ -234,7 +230,7 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         if (context.GetText().StartsWith("Read"))
         {
             var id = context.ID().GetText();
-            programa += $"\n{id} = Convert.ToInt32(Console.ReadLine());";
+            programa += $"\n{id} = Console.ReadLine();";
         }
         else if (context.GetText().StartsWith("Write"))
         {
@@ -295,70 +291,174 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
     public override VariableSegment VisitEdp(GramaticaParser.EdpContext context)
     {
         Console.WriteLine("Visitando Edp: " + context.GetText());
-        var edpNode = new AST.EdpNode();
+
+        if (context.ifd() != null)
+        {
+            Visit(context.ifd()); // else if
+        }
+        else
+        {
+            programa += "{\n";
+            Visit(context.sl());
+            programa += "\n}";
+        }
+
         return interpreterProgram;
     }
 
     public override VariableSegment VisitFd(GramaticaParser.FdContext context)
     {
         Console.WriteLine("Visitando Fd: " + context.GetText());
-        var fdNode = new AST.FdNode();
+
+        if (context.ID() != null)
+        {
+            string nombre = context.ID().GetText();
+            programa += $"\npublic static ";
+
+            Visit(context.rt()); // tipo de retorno y cuerpo
+
+            programa = programa.Replace("$patata", nombre); // reemplazar si es necesario
+
+            Visit(context.fd()); // siguiente función (por recursión)
+        }
+        
         return interpreterProgram;
     }
 
     public override VariableSegment VisitRt(GramaticaParser.RtContext context)
     {
         Console.WriteLine("Visitando Rt: " + context.GetText());
-        var rtNode = new AST.RtNode();
+
+        if (context.ty() != null) // tiene retorno
+        {
+            string tipo = context.ty().GetText();
+            programa += $"{tipo} $patata(";
+
+            Visit(context.Parent.GetChild(3)); // pl
+
+            programa += ")\n{\n";
+            Visit(context.sl());
+            programa += "\nreturn ";
+            Visit(context.typ());
+            programa += ";\n}";
+        }
+        else // sin retorno explícito (void)
+        {
+            programa += $"void $patata(";
+            Visit(context.Parent.GetChild(2)); // pl
+            programa += ")\n{\n";
+            Visit(context.sl());
+            programa += "\n}";
+        }
+
         return interpreterProgram;
     }
 
     public override VariableSegment VisitPl(GramaticaParser.PlContext context)
     {
         Console.WriteLine("Visitando Pl: " + context.GetText());
-        var plNode = new AST.PlNode();
+
+        if (context.ty() != null && context.ID() != null)
+        {
+            string tipo = context.ty().GetText();
+            string nombre = context.ID().GetText();
+            programa += $"{tipo} {nombre}";
+            Visit(context.plp());
+        }
+
         return interpreterProgram;
     }
 
     public override VariableSegment VisitPlp(GramaticaParser.PlpContext context)
     {
         Console.WriteLine("Visitando Plp: " + context.GetText());
-        var plpNode = new AST.PlpNode();
+
+        if (context.ty() != null && context.ID() != null)
+        {
+            programa += ", ";
+            string tipo = context.ty().GetText();
+            string nombre = context.ID().GetText();
+            programa += $"{tipo} {nombre}";
+            Visit(context.plp());
+        }
+
         return interpreterProgram;
     }
 
     public override VariableSegment VisitTy(GramaticaParser.TyContext context)
     {
         Console.WriteLine("Visitando Ty: " + context.GetText());
-        var tyNode = new AST.TyNode();
+
+        programa += context.GetText();
+
         return interpreterProgram;
     }
 
     public override VariableSegment VisitTyp(GramaticaParser.TypContext context)
     {
         Console.WriteLine("Visitando Typ: " + context.GetText());
-        var typNode = new AST.TypNode();
+
+
+        if (context.INT() != null)
+        {
+            programa += context.INT().GetText();
+        }
+        else if (context.FLOAT() != null)
+        {
+            programa += context.FLOAT().GetText();
+        }
+        else if (context.STRING() != null)
+        {
+            programa += context.STRING().GetText();
+        }
+        else if (context.BOOL() != null)
+        {
+            programa += context.BOOL().GetText();
+        }
+        else if (context.ID() != null)
+        {
+            programa += context.ID().GetText();
+        }
+
         return interpreterProgram;
     }
 
     public override VariableSegment VisitFc(GramaticaParser.FcContext context)
     {
         Console.WriteLine("Visitando Fc: " + context.GetText());
-        var fcNode = new AST.FcNode();
+
+
+        programa += $"\n{context.ID().GetText()} (";
+        Visit(context.p());
+        programa += $");";
+
         return interpreterProgram;
     }
 
     public override VariableSegment VisitP(GramaticaParser.PContext context)
     {
         Console.WriteLine("Visitando P: " + context.GetText());
-        var pNode = new AST.PNode();
+        
+        if(context.typ() != null)
+        {
+            Visit(context.typ());
+            Visit(context.pp());
+        }
+            
         return interpreterProgram;
     }
 
     public override VariableSegment VisitPp(GramaticaParser.PpContext context)
     {
         Console.WriteLine("Visitando Pp: " + context.GetText());
-        var ppNode = new AST.PpNode();
+
+        if (context.typ() != null)
+        {
+            programa += ", ";
+            Visit(context.typ());
+            Visit(context.pp());
+        }
+
         return interpreterProgram;
     }
 }
