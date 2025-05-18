@@ -1,189 +1,261 @@
 ﻿using System;
 using Antlr4.Runtime.Misc;
+using Antlr4.Runtime;
 using ProyectoCompiladores;
 
-public class MyVisitor : GramaticaBaseVisitor<object>
+public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
 {
-    public override object VisitProg(GramaticaParser.ProgContext context)
+
+    private VariableSegment interpreterProgram;
+    public string programa;
+    public string nombre_programa;
+
+    public MyVisitor(string programa, string nombre_programa)
+    {
+        interpreterProgram = new VariableSegment();
+        this.programa = programa;
+        this.nombre_programa = nombre_programa;
+    }
+
+    private void visitChildren(ParserRuleContext context)
+    {
+        if (context?.children == null) return;
+
+        foreach (var child in context.children)
+        {
+            Visit(child);
+        }
+    }
+
+
+
+    public override VariableSegment VisitProg(GramaticaParser.ProgContext context)
     {
         Console.WriteLine("Visitando programa principal...");
         var progNode = new AST.PgNode();
-        return base.VisitProg(context); // Visita hijos recursivamente
+
+        visitChildren(context);
+
+        return interpreterProgram; // Visita hijos recursivamente
     }
 
-    public override object VisitPg(GramaticaParser.PgContext context)
+    public override VariableSegment VisitPg(GramaticaParser.PgContext context)
     {
         Console.WriteLine("Visitando Pg: " + context.GetText());
+
+        visitChildren(context);
+
         var pgNode = new AST.PgNode();
-        return base.VisitPg(context);
+        return interpreterProgram;
     }
 
-    public override object VisitSl(GramaticaParser.SlContext context)
+    public override VariableSegment VisitSl(GramaticaParser.SlContext context)
     {
         Console.WriteLine("Visitando Sl: " + context.GetText());
+
+        visitChildren(context);
+
         var slNode = new AST.SlNode();
-        return base.VisitSl(context);
+        return interpreterProgram;
     }
 
-    public override object VisitS(GramaticaParser.SContext context)
+    public override VariableSegment VisitS(GramaticaParser.SContext context)
     {
         Console.WriteLine("Visitando S: " + context.GetText());
+
+        visitChildren(context);
+
         var sNode = new AST.SNode();
-        return base.VisitS(context);
+        return interpreterProgram;
     }
 
-    public override object VisitD(GramaticaParser.DContext context)
+    public override VariableSegment VisitD(GramaticaParser.DContext context)
     {
         Console.WriteLine("Visitando D: " + context.GetText());
-        var dNode = new AST.DNode();
-        return base.VisitD(context);
+
+        // Si tu regla D es algo como: D : '$int' ID '=' INT ;
+        var tipo = context.GetChild(0).GetText(); // o context.INT().GetText() si existe ese método
+        var nombre = context.ID().GetText();
+
+        Console.WriteLine($"Declaración de variable: tipo={tipo}, nombre={nombre}");
+
+        switch (tipo)
+        {
+            case "int":
+                programa += $"\npublic static int {nombre} = (int)(";
+                Visit(context.e());
+                programa += ");";
+                break;
+
+            case "float":
+                programa += $"\npublic static float {nombre} = ";
+                Visit(context.e());
+                programa += ";";
+                break;
+
+            case "string":
+                string valor = context.STRING().GetText();
+                programa += $"\npublic static string {nombre} = {valor}";
+                break;
+            case "bool":
+                programa += $"\npublic static bool {nombre} = ";
+                Visit(context.ds());
+                programa += ";";
+                break;
+        }
+
+        return interpreterProgram;
     }
 
-    public override object VisitE(GramaticaParser.EContext context)
+
+    public override VariableSegment VisitE(GramaticaParser.EContext context)
     {
         Console.WriteLine("Visitando E: " + context.GetText());
-        var eNode = new AST.ENode();
-        return base.VisitE(context);
+
+
+
+        
+        return interpreterProgram;
     }
 
-    public override object VisitEp(GramaticaParser.EpContext context)
+    public override VariableSegment VisitEp(GramaticaParser.EpContext context)
     {
         Console.WriteLine("Visitando Ep: " + context.GetText());
         var epNode = new AST.EpNode();
-        return base.VisitEp(context);
+        return interpreterProgram;
     }
 
-    public override object VisitT(GramaticaParser.TContext context)
+    public override VariableSegment VisitT(GramaticaParser.TContext context)
     {
         Console.WriteLine("Visitando T: " + context.GetText());
         var tNode = new AST.TNode();
-        return base.VisitT(context);
+        return interpreterProgram;
     }
 
-    public override object VisitTp(GramaticaParser.TpContext context)
+    public override VariableSegment VisitTp(GramaticaParser.TpContext context)
     {
         Console.WriteLine("Visitando Tp: " + context.GetText());
         var tpNode = new AST.TpNode();
-        return base.VisitTp(context);
+        return interpreterProgram;
     }
 
-    public override object VisitF(GramaticaParser.FContext context)
+    public override VariableSegment VisitF(GramaticaParser.FContext context)
     {
         Console.WriteLine("Visitando F: " + context.GetText());
         var fNode = new AST.FNode();
-        return base.VisitF(context);
+        return interpreterProgram;
     }
 
-    public override object VisitDs(GramaticaParser.DsContext context)
+    public override VariableSegment VisitDs(GramaticaParser.DsContext context)
     {
         Console.WriteLine("Visitando Ds: " + context.GetText());
         var dsNode = new AST.DsNode();
-        return base.VisitDs(context);
+        return interpreterProgram;
     }
 
-    public override object VisitDsp(GramaticaParser.DspContext context)
+    public override VariableSegment VisitDsp(GramaticaParser.DspContext context)
     {
         Console.WriteLine("Visitando Dsp: " + context.GetText());
         var dspNode = new AST.DspNode();
-        return base.VisitDsp(context);
+        return interpreterProgram;
     }
 
-    public override object VisitIo(GramaticaParser.IoContext context)
+    public override VariableSegment VisitIo(GramaticaParser.IoContext context)
     {
         Console.WriteLine("Visitando Io: " + context.GetText());
         var ioNode = new AST.IoNode();
-        return base.VisitIo(context);
+        return interpreterProgram;
     }
 
-    public override object VisitCe(GramaticaParser.CeContext context)
+    public override VariableSegment VisitCe(GramaticaParser.CeContext context)
     {
         Console.WriteLine("Visitando Ce: " + context.GetText());
         var ceNode = new AST.CeNode();
-        return base.VisitCe(context);
+        return interpreterProgram;
     }
 
-    public override object VisitIfd(GramaticaParser.IfdContext context)
+    public override VariableSegment VisitIfd(GramaticaParser.IfdContext context)
     {
         Console.WriteLine("Visitando Ifd: " + context.GetText());
         var ifdNode = new AST.IfdNode();
-        return base.VisitIfd(context);
+        return interpreterProgram;
     }
 
-    public override object VisitEd(GramaticaParser.EdContext context)
+    public override VariableSegment VisitEd(GramaticaParser.EdContext context)
     {
         Console.WriteLine("Visitando Ed: " + context.GetText());
         var edNode = new AST.EdNode();
-        return base.VisitEd(context);
+        return interpreterProgram;
     }
 
-    public override object VisitEdp(GramaticaParser.EdpContext context)
+    public override VariableSegment VisitEdp(GramaticaParser.EdpContext context)
     {
         Console.WriteLine("Visitando Edp: " + context.GetText());
         var edpNode = new AST.EdpNode();
-        return base.VisitEdp(context);
+        return interpreterProgram;
     }
 
-    public override object VisitFd(GramaticaParser.FdContext context)
+    public override VariableSegment VisitFd(GramaticaParser.FdContext context)
     {
         Console.WriteLine("Visitando Fd: " + context.GetText());
         var fdNode = new AST.FdNode();
-        return base.VisitFd(context);
+        return interpreterProgram;
     }
 
-    public override object VisitRt(GramaticaParser.RtContext context)
+    public override VariableSegment VisitRt(GramaticaParser.RtContext context)
     {
         Console.WriteLine("Visitando Rt: " + context.GetText());
         var rtNode = new AST.RtNode();
-        return base.VisitRt(context);
+        return interpreterProgram;
     }
 
-    public override object VisitPl(GramaticaParser.PlContext context)
+    public override VariableSegment VisitPl(GramaticaParser.PlContext context)
     {
         Console.WriteLine("Visitando Pl: " + context.GetText());
         var plNode = new AST.PlNode();
-        return base.VisitPl(context);
+        return interpreterProgram;
     }
 
-    public override object VisitPlp(GramaticaParser.PlpContext context)
+    public override VariableSegment VisitPlp(GramaticaParser.PlpContext context)
     {
         Console.WriteLine("Visitando Plp: " + context.GetText());
         var plpNode = new AST.PlpNode();
-        return base.VisitPlp(context);
+        return interpreterProgram;
     }
 
-    public override object VisitTy(GramaticaParser.TyContext context)
+    public override VariableSegment VisitTy(GramaticaParser.TyContext context)
     {
         Console.WriteLine("Visitando Ty: " + context.GetText());
         var tyNode = new AST.TyNode();
-        return base.VisitTy(context);
+        return interpreterProgram;
     }
 
-    public override object VisitTyp(GramaticaParser.TypContext context)
+    public override VariableSegment VisitTyp(GramaticaParser.TypContext context)
     {
         Console.WriteLine("Visitando Typ: " + context.GetText());
         var typNode = new AST.TypNode();
-        return base.VisitTyp(context);
+        return interpreterProgram;
     }
 
-    public override object VisitFc(GramaticaParser.FcContext context)
+    public override VariableSegment VisitFc(GramaticaParser.FcContext context)
     {
         Console.WriteLine("Visitando Fc: " + context.GetText());
         var fcNode = new AST.FcNode();
-        return base.VisitFc(context);
+        return interpreterProgram;
     }
 
-    public override object VisitP(GramaticaParser.PContext context)
+    public override VariableSegment VisitP(GramaticaParser.PContext context)
     {
         Console.WriteLine("Visitando P: " + context.GetText());
         var pNode = new AST.PNode();
-        return base.VisitP(context);
+        return interpreterProgram;
     }
 
-    public override object VisitPp(GramaticaParser.PpContext context)
+    public override VariableSegment VisitPp(GramaticaParser.PpContext context)
     {
         Console.WriteLine("Visitando Pp: " + context.GetText());
         var ppNode = new AST.PpNode();
-        return base.VisitPp(context);
+        return interpreterProgram;
     }
 }
 

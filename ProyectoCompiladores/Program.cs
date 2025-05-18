@@ -47,8 +47,10 @@ public class Compiler
             var tree = parser.prog();
 
             // Crear instancia de tu Visitor
-            MyVisitor visitor = new MyVisitor();
+            MyVisitor visitor = new MyVisitor("", "hola.cs");
             visitor.Visit(tree);
+
+            Console.WriteLine(visitor.programa);
         }
         catch (Exception e)
         {

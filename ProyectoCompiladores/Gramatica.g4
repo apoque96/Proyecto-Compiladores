@@ -19,7 +19,7 @@ s: d
 d : 'int' ID '=' e ';' 
 | 'float' ID '=' e ';' 
 | 'string' ID '=' STRING
-| 'bool' ID '=' BOOL ';'
+| 'bool' ID '=' ds ';'
 ;
 
 e: t ep
