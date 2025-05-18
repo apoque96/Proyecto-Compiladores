@@ -18,7 +18,7 @@ s: d
 //ese 'int' contara como Keyword? - COMENTARIO// 
 d : 'int' ID '=' e ';' 
 | 'float' ID '=' e ';' 
-| 'string' ID '=' STRING
+| 'string' ID '=' STRING ';'
 | 'bool' ID '=' ds ';'
 ;
 
