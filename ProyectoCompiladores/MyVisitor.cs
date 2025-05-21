@@ -32,16 +32,26 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
     {
         Console.WriteLine("Visitando programa principal...");
 
+        programa += $"using System;\n\npublic class {nombre_programa}\n{{";
+
         visitChildren(context);
 
-        return interpreterProgram; // Visita hijos recursivamente
+        programa += "\n}";
+
+        return interpreterProgram;
     }
 
     public override VariableSegment VisitPg(GramaticaParser.PgContext context)
     {
         Console.WriteLine("Visitando Pg: " + context.GetText());
 
-        visitChildren(context);
+        Visit(context.fd());
+
+        programa += "\npublic static void Main(string[] args)\n{";
+
+        Visit(context.sl());
+
+        programa += "\n}";
 
         return interpreterProgram;
     }
@@ -78,23 +88,23 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         switch (tipo)
         {
             case "int":
-                programa += $"\npublic static int {nombre} = (int)(";
+                programa += $"\nint {nombre} = (int)(";
                 Visit(context.e());
                 programa += ");";
                 break;
 
             case "float":
-                programa += $"\npublic static float {nombre} = ";
+                programa += $"\nfloat {nombre} = ";
                 Visit(context.e());
                 programa += ";";
                 break;
 
             case "string":
                 string valor = context.STRING().GetText();
-                programa += $"\npublic static string {nombre} = {valor};";
+                programa += $"\nstring {nombre} = {valor};";
                 break;
             case "bool":
-                programa += $"\npublic static bool {nombre} = ";
+                programa += $"\nbool {nombre} = ";
                 Visit(context.ds());
                 programa += ";";
                 break;
@@ -180,7 +190,7 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         }
         else if (context.FLOAT() != null)
         {
-            programa += context.FLOAT().GetText();
+            programa += context.FLOAT().GetText().Substring(1) + "f";
         }
         else if (context.ID() != null)
         {
