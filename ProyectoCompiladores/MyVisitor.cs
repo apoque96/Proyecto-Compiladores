@@ -129,10 +129,10 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
                 else
                 {
                     variables["float"][nombre] = new Variable(nombre, Type.FLOAT);
-                    programa += $"\nfloat {nombre} = ";
+                    programa += $"\nfloat {nombre} = (float)(";
                 }
                 Visit(context.e());
-                programa += ";";
+                programa += ");";
                 break;
 
             case "string":
@@ -302,7 +302,18 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         if (context.GetText().StartsWith("Read"))
         {
             var id = context.ID().GetText();
-            programa += $"\n{id} = Console.ReadLine();";
+            var variables = interpreterProgram.variables;
+
+            if (variables["int"].ContainsKey(id))
+                programa += $"\n{id} = Convert.ToInt32(Console.ReadLine());";
+            else if (variables["float"].ContainsKey(id))
+                programa += $"\n{id} = float.Parse(Console.ReadLine());";
+            else if (variables["bool"].ContainsKey(id))
+                programa += $"\n{id} = Conver.ToBoolean(Console.ReadLine());";
+            else if (variables["string"].ContainsKey(id))
+                programa += $"\n{id} = Console.ReadLine();";
+            else
+                throw new Exception($"Error: no se pudo encontrar la variable {id}");
         }
         else if (context.GetText().StartsWith("Write"))
         {
@@ -356,7 +367,7 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
 
         programa += $"\nelse";
         Visit(context.edp());
-        
+
         return interpreterProgram;
     }
 
@@ -393,7 +404,7 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
 
             Visit(context.fd()); // siguiente función (por recursión)
         }
-        
+
         return interpreterProgram;
     }
 
@@ -510,13 +521,13 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
     public override VariableSegment VisitP(GramaticaParser.PContext context)
     {
         Console.WriteLine("Visitando P: " + context.GetText());
-        
-        if(context.typ() != null)
+
+        if (context.typ() != null)
         {
             Visit(context.typ());
             Visit(context.pp());
         }
-            
+
         return interpreterProgram;
     }
 
@@ -534,5 +545,3 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         return interpreterProgram;
     }
 }
-
-   
