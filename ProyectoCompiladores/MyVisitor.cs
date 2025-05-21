@@ -34,11 +34,20 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
 
         programa += $"using System;\n\npublic class {nombre_programa}\n{{";
 
-        visitChildren(context);
+        try
+        {
+            visitChildren(context);
 
-        programa += "\n}";
+            programa += "\n}";
 
-        return interpreterProgram;
+            return interpreterProgram;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"{e.Message}");
+            programa = "";
+            return null;
+        }
     }
 
     public override VariableSegment VisitPg(GramaticaParser.PgContext context)
@@ -83,32 +92,85 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         var tipo = context.GetChild(0).GetText(); // o context.INT().GetText() si existe ese método
         var nombre = context.ID().GetText();
 
+        // Agregar la variable al diccionario
+        var variables = interpreterProgram.variables;
+
         Console.WriteLine($"Declaración de variable: tipo={tipo}, nombre={nombre}");
 
         switch (tipo)
         {
             case "int":
-                programa += $"\nint {nombre} = (int)(";
+                // Revisa si la variable ya existe
+                if (variables["int"].ContainsKey(nombre))
+                    programa += $"\n{nombre} = (int)(";
+                else if (
+                    variables["float"].ContainsKey(nombre) ||
+                    variables["string"].ContainsKey(nombre) ||
+                    variables["bool"].ContainsKey(nombre))
+                    throw new Exception($"Error: La variable {nombre} ya existe con un tipo diferente.");
+                else
+                {
+                    variables["int"][nombre] = new Variable(nombre, Type.INT);
+                    programa += $"\nint {nombre} = (int)(";
+                }
                 Visit(context.e());
                 programa += ");";
                 break;
 
             case "float":
-                programa += $"\nfloat {nombre} = ";
+                // Revisa si la variable ya existe
+                if (variables["float"].ContainsKey(nombre))
+                    programa += $"\n{nombre} = (float)(";
+                else if (
+                    variables["int"].ContainsKey(nombre) ||
+                    variables["string"].ContainsKey(nombre) ||
+                    variables["bool"].ContainsKey(nombre))
+                    throw new Exception($"Error: La variable {nombre} ya existe con un tipo diferente.");
+                else
+                {
+                    variables["float"][nombre] = new Variable(nombre, Type.FLOAT);
+                    programa += $"\nfloat {nombre} = ";
+                }
                 Visit(context.e());
                 programa += ";";
                 break;
 
             case "string":
+                // Revisa si la variable ya existe
                 string valor = context.STRING().GetText();
-                programa += $"\nstring {nombre} = {valor};";
+                if (variables["string"].ContainsKey(nombre))
+                    programa += $"\n{nombre} = {valor};";
+                else if (
+                    variables["int"].ContainsKey(nombre) ||
+                    variables["float"].ContainsKey(nombre) ||
+                    variables["bool"].ContainsKey(nombre))
+                    throw new Exception($"Error: La variable {nombre} ya existe con un tipo diferente.");
+                else
+                {
+                    variables["string"][nombre] = new Variable(nombre, Type.STRING);
+                    programa += $"\nstring {nombre} = {valor};";
+                }
                 break;
             case "bool":
-                programa += $"\nbool {nombre} = ";
+                // Revisa si la variable ya existe
+                if (variables["bool"].ContainsKey(nombre))
+                    programa += $"\n{nombre} = ";
+                else if (
+                    variables["int"].ContainsKey(nombre) ||
+                    variables["float"].ContainsKey(nombre) ||
+                    variables["string"].ContainsKey(nombre))
+                    throw new Exception($"Error: La variable {nombre} ya existe con un tipo diferente.");
+                else
+                {
+                    variables["bool"][nombre] = new Variable(nombre, Type.BOOL);
+                    programa += $"\nbool {nombre} = ";
+                }
                 Visit(context.ds());
                 programa += ";";
                 break;
         }
+
+        interpreterProgram.variables = variables;
 
         return interpreterProgram;
     }

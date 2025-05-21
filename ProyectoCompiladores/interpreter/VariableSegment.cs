@@ -1,29 +1,15 @@
-﻿
-
-public class VariableSegment
+﻿public class VariableSegment
 {
-    private Dictionary<string, Variable<bool>> booleanVariables = new Dictionary<string, Variable<bool>>();
-    private Dictionary<string, Variable<int>> integerVariables = new Dictionary<string, Variable<int>>();
-    private Dictionary<string, Variable<float>> floatVariables = new Dictionary<string, Variable<float>>();
-    private Dictionary<string, Variable<string>> stringVariables = new Dictionary<string, Variable<string>>();
+    /// variables[tipo][nombre]
+    public Dictionary<string, Dictionary<string, Variable>> variables { get; set; }
 
-    public Dictionary<string, Variable<bool>> getBoolVariables()
+    public VariableSegment()
     {
-        return this.booleanVariables;
-    }
-
-    public Dictionary<string, Variable<int>> getIntVariables()
-    {
-        return this.integerVariables;
-    }
-
-    public Dictionary<string, Variable<float>> getFloatVariables()
-    {
-        return this.floatVariables;
-    }
-
-    public Dictionary<string, Variable<string>> getStringVariables()
-    {
-        return this.stringVariables;
+        variables = new Dictionary<string, Dictionary<string, Variable>>();
+        variables["int"] = new Dictionary<string, Variable>();
+        variables["float"] = new Dictionary<string, Variable>();
+        variables["string"] = new Dictionary<string, Variable>();
+        variables["bool"] = new Dictionary<string, Variable>();
+        variables["function"] = new Dictionary<string, Variable>();
     }
 }
