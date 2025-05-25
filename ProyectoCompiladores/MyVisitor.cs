@@ -36,7 +36,8 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
     {
         Console.WriteLine("Visitando programa principal...");
 
-        programa += $"using System;\n\npublic class {Path.GetFileNameWithoutExtension(nombre_programa)}\n{{";
+        programa += $"using System;\n\npublic class {
+            Path.GetFileNameWithoutExtension(nombre_programa).Replace(" ", "_")}\n{{";
 
         try
         {
@@ -274,6 +275,13 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         }
         else if (context.ID() != null)
         {
+            //Verifica que la variable existe
+            var id = context.ID().GetText();
+            var variables = interpreterProgram.variables;
+
+            if (!variables["int"].ContainsKey(id) && !variables["float"].ContainsKey(id))
+                throw new Exception($"Error: no se encontro la variable {id} o es del tipo incorrecto");
+
             programa += context.ID().GetText();
         }
         else
@@ -294,7 +302,15 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         {
             if (context.GetChild(1) != null)
                 programa += "!";
-            programa += context.ID().GetText();
+            // Revisa si la variable existe
+            var variables = interpreterProgram.variables;
+
+            var id = context.ID().GetText();
+
+            if (!variables["bool"].ContainsKey(id))
+                throw new Exception($"Error: no se encontro la variable {id} o es del tipo incorrecto");
+
+            programa += id;
         }
         else if (context.e(0) != null)
         {
@@ -468,6 +484,40 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
             programa += ")\n{\n";
             Visit(context.sl());
             programa += "\nreturn ";
+
+            // Revisar que el tipo de retorno sea el mismo
+            var typ = context.typ();
+            if (typ.ID() != null)
+            {
+                // Revisar que la variable de retorno exista
+                var variables = interpreterProgram.variables;
+                if (!variables["int"].ContainsKey(typ.ID().GetText()) && tipo == "int")
+                    throw new Exception($"Error: la variable {typ.ID().GetText()} " +
+                        $"no existe o es de un tipo distinto al de la función");
+                else if (!variables["float"].ContainsKey(typ.ID().GetText()) && tipo == "float")
+                    throw new Exception($"Error: la variable {typ.ID().GetText()} " +
+                        $"no existe o es de un tipo distinto al de la función");
+                else if (!variables["string"].ContainsKey(typ.ID().GetText()) && tipo == "string")
+                    throw new Exception($"Error: la variable {typ.ID().GetText()} " +
+                        $"no existe o es de un tipo distinto al de la función");
+                else if (!variables["bool"].ContainsKey(typ.ID().GetText()) && tipo == "bool")
+                    throw new Exception($"Error: la variable {typ.ID().GetText()} " +
+                        $"no existe o es de un tipo distinto al de la función");
+            }
+            else if (tipo == "int" && typ.INT() == null)
+                throw new Exception("Error: el tipo de dato de " +
+                    "retorno no coincide con el de la funcion");
+            else if (tipo == "float" && typ.FLOAT() == null)
+                throw new Exception("Error: el tipo de dato de " +
+                    "retorno no coincide con el de la funcion");
+            else if (tipo == "string" && typ.STRING() == null)
+                throw new Exception("Error: el tipo de dato de " +
+                    "retorno no coincide con el de la funcion");
+            else if (tipo == "bool" && typ.BOOL() == null)
+                throw new Exception("Error: el tipo de dato de " +
+                    "retorno no coincide con el de la funcion");
+
+
             Visit(context.typ());
             programa += ";\n}";
         }

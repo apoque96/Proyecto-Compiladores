@@ -3,6 +3,7 @@ int i = 0;
 Read(i);
 
 while(i > 0){
-	Write("hola");
+	string hola = "hola";
+	Write(hola);
 	int i = i - 1;
 }

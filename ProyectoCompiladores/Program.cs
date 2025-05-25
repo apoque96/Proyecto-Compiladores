@@ -56,6 +56,12 @@ public class Compiler
 
             // Usamos la regla inicial (por ejemplo, prog)
             var tree = parser.prog();
+            
+            // Terminar si hay error sintactico
+            if (parser.NumberOfSyntaxErrors > 0)
+            {
+                return;
+            }
 
             // Crear instancia de tu Visitor
             MyVisitor visitor = new MyVisitor("",

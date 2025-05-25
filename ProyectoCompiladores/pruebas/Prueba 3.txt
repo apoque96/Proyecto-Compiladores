@@ -1,12 +1,14 @@
 BeginProgram
 int myInput = 2;
 Read(myInput);
+string result = "Positive";
 
 if(myInput > 0)
 {
-	Write("Positive");
+	Write(result);
 }
 else
 {
-	Write("Negative");
+	string result = "Negative";
+	Write(result);
 }

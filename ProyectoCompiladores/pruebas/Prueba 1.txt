@@ -1,2 +1,3 @@
 BeginProgram
-Write("Hello World");
+string hello = "Hello World";
+Write(hello);
