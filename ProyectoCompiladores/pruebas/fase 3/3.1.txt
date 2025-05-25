@@ -1,0 +1,7 @@
+﻿BeginProgram
+int i = 0;
+Read(i);
+int half = i / 2;
+float parenthesis = (2-((i-2)*3));
+Write(half);
+Write(parenthesis);

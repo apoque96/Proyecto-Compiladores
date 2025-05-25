@@ -10,6 +10,8 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
     public string programa;
     public string nombre_programa;
 
+    private string tempString;
+
     public MyVisitor(string programa, string nombre_programa)
     {
         interpreterProgram = new VariableSegment();
@@ -317,8 +319,14 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         }
         else if (context.GetText().StartsWith("Write"))
         {
-            var texto = context.STRING().GetText();
-            programa += $"\nConsole.WriteLine({texto});";
+            var id = context.ID().GetText();
+            var variables = interpreterProgram.variables;
+
+            if (!variables["int"].ContainsKey(id) && !variables["float"].ContainsKey(id)
+                && !variables["bool"].ContainsKey(id) && !variables["string"].ContainsKey(id))
+                    throw new Exception($"Error: no se pudo encontrar la variable {id}");
+
+            programa += $"\nConsole.WriteLine({id});";
         }
 
         return interpreterProgram;
@@ -398,6 +406,11 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
             string nombre = context.ID().GetText();
             programa += $"\npublic static ";
 
+            // vaciar la variable (utilizada para la declaración de variables)
+            tempString = "";
+
+            Visit(context.pl());
+
             Visit(context.rt()); // tipo de retorno y cuerpo
 
             programa = programa.Replace("$patata", nombre); // reemplazar si es necesario
@@ -417,7 +430,8 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
             string tipo = context.ty().GetText();
             programa += $"{tipo} $patata(";
 
-            Visit(context.Parent.GetChild(3)); // pl
+            // agregar al programa las variables declaradas
+            programa += tempString;
 
             programa += ")\n{\n";
             Visit(context.sl());
@@ -428,7 +442,10 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         else // sin retorno explícito (void)
         {
             programa += $"void $patata(";
-            Visit(context.Parent.GetChild(2)); // pl
+
+            // agregar al programa las variables declaradas
+            programa += tempString;
+
             programa += ")\n{\n";
             Visit(context.sl());
             programa += "\n}";
@@ -445,7 +462,35 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         {
             string tipo = context.ty().GetText();
             string nombre = context.ID().GetText();
-            programa += $"{tipo} {nombre}";
+
+            // Agregar la variable al diccionario
+            var variables = interpreterProgram.variables;
+
+            Console.WriteLine($"Declaración de variable: tipo={tipo}, nombre={nombre}");
+
+            switch (tipo)
+            {
+                case "int":
+                    variables["int"][nombre] = new Variable(nombre, Type.INT);
+                    tempString += $"int {nombre}";
+                    break;
+
+                case "float":
+                    variables["float"][nombre] = new Variable(nombre, Type.FLOAT);
+                    tempString += $"float {nombre}";
+                    break;
+
+                case "string":
+                    variables["string"][nombre] = new Variable(nombre, Type.STRING);
+                    tempString += $"string {nombre}";
+                    break;
+                case "bool":
+                    variables["bool"][nombre] = new Variable(nombre, Type.BOOL);
+                    tempString += $"bool {nombre}";
+                    break;
+            }
+            interpreterProgram.variables = variables;
+
             Visit(context.plp());
         }
 
@@ -458,10 +503,36 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
 
         if (context.ty() != null && context.ID() != null)
         {
-            programa += ", ";
             string tipo = context.ty().GetText();
             string nombre = context.ID().GetText();
-            programa += $"{tipo} {nombre}";
+
+            // Agregar la variable al diccionario
+            var variables = interpreterProgram.variables;
+
+            Console.WriteLine($"Declaración de variable: tipo={tipo}, nombre={nombre}");
+
+            switch (tipo)
+            {
+                case "int":
+                    variables["int"][nombre] = new Variable(nombre, Type.INT);
+                    tempString += $", int {nombre}";
+                    break;
+
+                case "float":
+                    variables["float"][nombre] = new Variable(nombre, Type.FLOAT);
+                    tempString += $", float {nombre}";
+                    break;
+
+                case "string":
+                    variables["string"][nombre] = new Variable(nombre, Type.STRING);
+                    tempString += $", string {nombre}";
+                    break;
+                case "bool":
+                    variables["bool"][nombre] = new Variable(nombre, Type.BOOL);
+                    tempString += $", bool {nombre}";
+                    break;
+            }
+            interpreterProgram.variables = variables;
             Visit(context.plp());
         }
 

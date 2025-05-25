@@ -9,6 +9,11 @@
 
   <ItemGroup>
     <None Remove="interpreter\VariableScope" />
+    <None Remove="pruebas\fase 3\3.1" />
+    <None Remove="pruebas\fase 3\3.1txt" />
+    <None Remove="pruebas\fase 3\fase 3_1.txt" />
+    <None Remove="pruebas\fase 3\NewFile1.txt" />
+    <None Remove="pruebas\fase 3\NewFile2.txt" />
   </ItemGroup>
 
   <ItemGroup>

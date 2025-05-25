@@ -1,0 +1,13 @@
+﻿fn imprimir(string s, int i, float f, bool b){
+	Write(s);
+	Write(i);
+	Write(f);
+	Write(b);
+}
+
+BeginProgram
+string a = "hola";
+int z = 5893476;
+float y = f945032.0;
+bool x = true;
+imprimir(a, z, y, x);

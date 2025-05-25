@@ -58,8 +58,8 @@ dsp: '>'
 | '!='
 ;
 
-io: 'Read' '(' ID ')' ';' 
-| 'Write' '(' STRING ')' ';'
+io: 'Read' '(' ID ')' ';'
+| 'Write' '(' ID ')' ';'
 ;
 
 ce: ifd
@@ -78,7 +78,7 @@ edp: '{' sl '}'
 ;
 
 fd: 'fn' ID '(' pl ')' rt fd
-| /* empty */
+| // empty
 ;
 
 rt: '->' ty '{' sl 'return' typ ';' '}'
@@ -117,13 +117,14 @@ pp: ',' typ pp
 | // empty
 ;
 
+BOOL        
+: 'true'
+| 'false' 
+;
+
 ID          : [a-zA-Z][a-zA-Z1-9_]* ;
 INT         : [0-9]+ ;
 FLOAT       : 'f'[0-9]+'.'[0-9]+ ;
 STRING : '"' (~["\\] | '\\' .)* '"' ;
 
-BOOL        
-: 'true'
-| 'false' 
-;
 WS          : [ \t\r\n]+ -> skip ;
