@@ -9,14 +9,16 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
     private VariableSegment interpreterProgram;
     public string programa;
     public string nombre_programa;
+    public string directorio;
 
     private string tempString;
 
-    public MyVisitor(string programa, string nombre_programa)
+    public MyVisitor(string programa, string nombre_programa, string directorio)
     {
         interpreterProgram = new VariableSegment();
         this.programa = programa;
         this.nombre_programa = nombre_programa;
+        this.directorio = directorio;
     }
 
     private void visitChildren(ParserRuleContext context)
@@ -34,13 +36,27 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
     {
         Console.WriteLine("Visitando programa principal...");
 
-        programa += $"using System;\n\npublic class {nombre_programa}\n{{";
+        programa += $"using System;\n\npublic class {Path.GetFileNameWithoutExtension(nombre_programa)}\n{{";
 
         try
         {
             visitChildren(context);
 
             programa += "\n}";
+
+            string nombre = Path.GetFileNameWithoutExtension(nombre_programa);
+
+            // Borrar contenido original del archivo
+            if (File.Exists(directorio + "\\" + nombre))
+            {
+                File.Delete(directorio + "\\" + nombre);
+            }
+
+            // Quita la extensión al archivo y guarda el archivo
+            File.WriteAllText(
+            Path.Combine(Path.GetDirectoryName(directorio + "\\" + nombre) ?? 
+            "", 
+            Path.GetFileNameWithoutExtension(directorio + "\\" + nombre)) + ".cs", programa);
 
             return interpreterProgram;
         }
@@ -260,6 +276,8 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         {
             programa += context.ID().GetText();
         }
+        else
+            throw new Exception($"Error: carácter inesperado {context.GetText()}");
 
         return interpreterProgram;
     }
@@ -272,6 +290,18 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         {
             programa += context.BOOL().GetText();
         }
+        else if (context.ID() != null)
+        {
+            if (context.GetChild(1) != null)
+                programa += "!";
+            programa += context.ID().GetText();
+        }
+        else if (context.e(0) != null)
+        {
+            Visit(context.e(0));
+            programa += " " + context.dsp().GetText() + " ";
+            Visit(context.e(1));
+        }
         else if (context.STRING() != null && context.GetText().Contains("=="))
         {
             programa += context.STRING(0).GetText() + " == " + context.STRING(1).GetText();
@@ -279,12 +309,6 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
         else if (context.STRING() != null && context.GetText().Contains("!="))
         {
             programa += context.STRING(0).GetText() + " != " + context.STRING(1).GetText();
-        }
-        else
-        {
-            Visit(context.e(0));
-            programa += " " + context.dsp().GetText() + " ";
-            Visit(context.e(1));
         }
 
         return interpreterProgram;
@@ -311,7 +335,7 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
             else if (variables["float"].ContainsKey(id))
                 programa += $"\n{id} = float.Parse(Console.ReadLine());";
             else if (variables["bool"].ContainsKey(id))
-                programa += $"\n{id} = Conver.ToBoolean(Console.ReadLine());";
+                programa += $"\n{id} = Convert.ToBoolean(Console.ReadLine());";
             else if (variables["string"].ContainsKey(id))
                 programa += $"\n{id} = Console.ReadLine();";
             else
@@ -414,6 +438,14 @@ public class MyVisitor : GramaticaBaseVisitor<VariableSegment>
             Visit(context.rt()); // tipo de retorno y cuerpo
 
             programa = programa.Replace("$patata", nombre); // reemplazar si es necesario
+
+            // Limpiar las variables
+            var variables = interpreterProgram.variables;
+
+            variables["int"] = new Dictionary<string, Variable>();
+            variables["float"] = new Dictionary<string, Variable>();
+            variables["string"] = new Dictionary<string, Variable>();
+            variables["bool"] = new Dictionary<string, Variable>();
 
             Visit(context.fd()); // siguiente función (por recursión)
         }

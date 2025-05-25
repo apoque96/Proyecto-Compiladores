@@ -1,0 +1,14 @@
+BeginProgram
+int a = 1;
+int b = 2;
+bool x = false;
+
+while (!x){
+	int c = 3;
+	int d = 5;
+	while (a < d){
+		Write(a);
+		int a = a + 1;
+	}
+	int x = 1;
+}

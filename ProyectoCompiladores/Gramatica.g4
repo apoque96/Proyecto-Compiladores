@@ -48,6 +48,8 @@ ds: BOOL
 | e dsp e
 | STRING '==' STRING
 | STRING '!=' STRING
+| ID
+| '!'ID
 ;
 
 dsp: '>'

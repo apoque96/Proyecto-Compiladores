@@ -44,6 +44,7 @@ namespace ProyectoCompiladores.lexer
         SEMICOLON,
         COMMA,
         ARROW,
+        NOT,
 
         // Identifiers and Literals
         ID,

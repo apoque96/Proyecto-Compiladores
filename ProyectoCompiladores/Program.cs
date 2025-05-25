@@ -11,14 +11,25 @@ public class Compiler
         try
         {
             string path;
-            if (args.Length == 1)
+            string destinationPath;
+            if (args.Length != 0)
             {
                 path = args[0];
             }
             else
             {
-                Console.WriteLine("Ingrese la ruta al archivo (ruta relativa):");
+                Console.WriteLine("Ingrese la ruta al archivo:");
                 path = Console.ReadLine();
+            }
+
+            if (args.Length == 2)
+            {
+                destinationPath = args[1];
+            }
+            else
+            {
+                Console.WriteLine("Ingrese la ruta donde desea guardar el archivo:");
+                destinationPath = Console.ReadLine();
             }
 
             // Leer el contenido del archivo fuente
@@ -47,8 +58,8 @@ public class Compiler
             var tree = parser.prog();
 
             // Crear instancia de tu Visitor
-            MyVisitor visitor = new MyVisitor("", 
-                "hola");
+            MyVisitor visitor = new MyVisitor("",
+                path, destinationPath);
             visitor.Visit(tree);
 
             Console.WriteLine(visitor.programa);

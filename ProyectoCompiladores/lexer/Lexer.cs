@@ -39,6 +39,7 @@ namespace ProyectoCompiladores.lexer
             (TokenType.RBRACE, @"\}"),
             (TokenType.SEMICOLON, @";"),
             (TokenType.COMMA, @","),
+            (TokenType.NOT, @"!"),
             (TokenType.STRING_LITERAL, @"""([^""\\]*(\\.[^""\\]*)*)"""),
             (TokenType.INT_LITERAL, @"[0-9]+"),
             (TokenType.FLOAT_LITERAL, @"f[0-9]+\.[0-9]+"),

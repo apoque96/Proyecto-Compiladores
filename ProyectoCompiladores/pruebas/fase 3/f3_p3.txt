@@ -1,0 +1,17 @@
+﻿fn suma(int a, int b, int c){
+
+	int sum = a + b + c;
+	Write(sum);
+
+}
+
+BeginProgram
+int a = 1;
+int b = 2;
+int c = 3;
+int d = 5;
+
+while (a < d){
+	suma(a, b, c);
+	int a = a + 1;
+}
